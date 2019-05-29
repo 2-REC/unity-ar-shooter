@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
-  <Tracking>
-    <ImageTarget name="rmit" size="9.000000 5.300395" />
-    <ImageTarget name="woman" size="5.500000 8.558091" />
-  </Tracking>
-</QCARConfig>

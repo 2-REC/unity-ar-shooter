@@ -2,11 +2,11 @@
 
 # GENERAL
 
-- [ ] Publish on Git
-- [ ] Move scripts from "Resources"<br>
-    => Not the right location for them (only for ... resources)
 - [ ] Use "unity-multi" for SpaceBrew Stuff
     => And remove from this repository.
+- [x] Publish on Git
+- [ ] Move scripts from "Resources"<br>
+    => Not the right location for them (only for ... resources)
 - [ ] Make a better/"finished" game
 
 
