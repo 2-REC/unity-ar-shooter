@@ -1,0 +1,4 @@
+[submodule "dependencies/network"]
+	path = dependencies/network
+	url = https://github.com/2-REC/unity-multi
+	branch = master

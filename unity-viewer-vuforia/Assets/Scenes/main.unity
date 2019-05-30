@@ -142,6 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spacebrewClientEvents: {fileID: 1795823919}
+  pubNameData: pubClientData
 --- !u!4 &101434406
 Transform:
   m_ObjectHideFlags: 0
@@ -1022,28 +1023,72 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
-      propertyPath: serverAddress
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
-      propertyPath: descriptionText
-      value: AR Client
-      objectReference: {fileID: 0}
-    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
-      propertyPath: clientName
-      value: UnityARViewer
-      objectReference: {fileID: 0}
-    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
-      propertyPath: serverPort
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
-      propertyPath: publishers.Array.data[2].msgType
+      propertyPath: messageTypes.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: publishers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: subscribers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: serverAddress
+      value: 127.0.0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: descriptionText
+      value: Unity AR Shooter Client
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: clientName
+      value: ARShooterClient
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: serverPort
+      value: 9000
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: publishers.Array.data[2].msgType
+      value: <default>
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
       propertyPath: subscribers.Array.data[2].msgType
-      value: 2
+      value: <default>
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: messageTypes.Array.data[0]
+      value: DATA
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: publishers.Array.data[1].name
+      value: pubClientDefault
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: publishers.Array.data[0].name
+      value: pubClientData
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: publishers.Array.data[0].msgType
+      value: DATA
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: subscribers.Array.data[1].name
+      value: subClientDefault
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: subscribers.Array.data[0].msgType
+      value: DATA
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: subscribers.Array.data[0].name
+      value: subClientData
+      objectReference: {fileID: 0}
+    - target: {fileID: 11415470, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
+      propertyPath: useConfigManager
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11438994, guid: b6a1a8f23a7832744ad06d7e307eaa68, type: 3}
       propertyPath: messageReceiver

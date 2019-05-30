@@ -7,8 +7,15 @@
 !/*
 /*/*
 
+!/dependencies/*
 !/vuforia-image-targets/*
 
 !/*/[Aa]ssets/
 !/*/[Pp]ackages/
 !/*/[Pp]rojectSettings/
+
+# SpaceBrew related files (all projects)
+/*/[Aa]ssets/[Ss]paceBrew/
+/*/[Aa]ssets/[Ss]paceBrew.meta
+/*/[Aa]ssets/[Ss]treamingAssets/.node
+/*/[Aa]ssets/[Ss]treamingAssets/.spacebrew

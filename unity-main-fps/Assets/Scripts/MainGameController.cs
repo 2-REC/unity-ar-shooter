@@ -62,7 +62,7 @@ send_data = true;
         //// LASER - END
 
 if (send_data) {
-    server.Send(msg.ToString());
+    server.SendData(msg.ToString());
 }
 
     }

@@ -3,9 +3,11 @@
 public class MessageSender : MonoBehaviour {
 
     public SpacebrewEvents spacebrewClientEvents;
+    public string pubNameData;
 
-    public void Send(string message) {
-        spacebrewClientEvents.SendString(message);
+
+    public void SendData(string message) {
+        spacebrewClientEvents.SendString(pubNameData, message);
     }
 
 }

@@ -159,7 +159,7 @@ arrow_instance.velocity = ar_camera.forward * 10.0f;
         msg["direction"]["y"] = ((int)(direction.y * 100)).ToString();
         msg["direction"]["z"] = ((int)(direction.z * 100)).ToString();
 
-        server.Send(msg.ToString());
+        server.SendData(msg.ToString());
     }
 
     void DrawLine(Vector3 origin, Vector3 end, Color color, float duration = 0.5f) {
