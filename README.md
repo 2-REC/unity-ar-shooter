@@ -7,7 +7,7 @@ Multiplayer game where "AR viewers" try to shoot "FPS player".
 
 ## Intro
 
-First version of (abandonned) Blind Swordman game.
+First version of (abandoned) Blind Swordman game.
 
 Working project (unfinished) with:
 - client: AR viewer, shooting arrows at scene
