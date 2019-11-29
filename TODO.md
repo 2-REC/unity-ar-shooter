@@ -28,6 +28,9 @@
 (TO CHECK:)
 
 # SERVER
+- [ ] Separate "server" stuff from "Main Player"
+    - make a third entity handling all the commnuication and removing the load from main player
+    <br>=> Look at "server_separation__TODO.txt" for initial info...
 - [ ] Send different messages to different types of client
     - player (main VR player)<br>
     - viewer (AR viewers)<br>

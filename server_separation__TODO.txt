@@ -1,0 +1,379 @@
+
+SERVER SEPARATION
+=> SEPARATE SERVER FROM "MAIN PLAYER"
+
+- Server receives message
+  => Depending on type:
+    - Process message
+    - Transfer/forward message (on specific publisher - depending on type)
+
+- Server creates message
+  => Send message
+
+
+=======================================================================================
+
+SERVER						PLAYER						VIEWER
+
+PLAYER_MOVE	=> pubMoveP			PLAYER_MOVE	=> pubMove
+VIEWER_MOVE	=> pubMoveV									VIEWER_MOVE	=> pubMove
+
+PLAYER_SHOOT	=> pubShoot			PLAYER_SHOOT	=> pubShoot
+VIEWER_SHOOT	=> pubShoot									VIEWER_SHOOT	=> pubShoot
+DESTROY		=> pubShoot
+
+
+subMoveP	=> PLAYER_MOVE			subMoveP	=> PLAYER_MOVE (other)		subMoveP	=> PLAYER_MOVE
+subMoveV	=> VIEWER_MOVE			subMoveV	=> VIEWER_MOVE			subMoveV	=> VIEWER_MOVE (other)
+
+subShootP	=> PLAYER_SHOOT			subShootP	=> PLAYER_SHOOT (other)
+subShootV	=> VIEWER_SHOOT			subShootV	=> VIEWER_SHOOT
+
+
+
+PLAYER
+PLAYER_MOVE => pubMove
+
+SERVER
+subMoveP => PLAYER_MOVE
+=> PLAYER_MOVE => pubMoveP
+
+VIEWER
+subMoveP => PLAYER_MOVE
+
+PLAYER
+subMoveP => PLAYER_MOVE (other)
+
+
+=======================================================================================
+
+Message types:
+
+From clients:
+
+PLAYER:
+
+    - MOVE
+        => Update Position for 'ID'.
+
+        - IN:
+            "subMove" => MOVE
+
+            - Receiver:
+                - "subMove"
+                    - connected to "pubMoveP" of SERVER
+                => Ignored by original "sender" (with same 'ID' as in message)
+            - Trigger:
+                - Update position associated to 'ID'
+                    => Depending on SRC, could update different info (eg: no orientation if SRC is VIEWER).
+
+        - OUT:
+            MOVE => "pubMove"
+            => Send(MOVE, msg)
+                => server.Send("pubMove", msg)
+
+            - Triggered by:
+                - Position change
+                    => Position listener (?) - Listener on position triggered (with time intervals to avoid overload).
+            - Sender:
+                - "pubMove"
+                    - connected to "subMove" of SERVER
+                    => Don't send straight to clients but via server, to make sure server handles everything.
+                - NEW MESSAGE
+                    - SRC: "PLAYER"
+                    - TYPE: "MOVE"
+                    - ID_CLIENT
+                    - Position (Vector3)
+                    - Orientation (Quaternion)
+
+
+(? - TODO if required
+=> SAME/SIMILAR TO VIEWER!
+    - SHOOT
+        => Create Arrow(?) for 'ID'.
+
+        - IN:
+TODO!
+
+        - OUT:
+            SHOOT => "pubShoot"
+            => Send(SHOOT, msg)
+                => server.Send("pubShoot", msg)
+
+            - Triggered by:
+                - Arrow creation
+                    => Event triggered.
+            - Sender:
+                - "pubShoot"
+                    - connected to "subShoot" of SERVER
+                - NEW MESSAGE
+                    - SRC: "PLAYER"
+                    - TYPE: "SHOOT"
+                    - ID_CLIENT
+                    - Position (Vector3)
+                    - Orientation (Quaternion)
+                    - Velocity (float?)
+)
+
+
+! - TODO!
+    - DESTROY
+        => Destroy arrow with 'ID'.
+        => SAME AS FOR VIEWER
+
+        - IN:
+            - Receiver:
+                - "subShoot"
+                    - connected to "pubShoot" of SERVER
+
+        - OUT:
+            N/A
+
+
+
+!!!! TODO !!!!
+VIEWER:
+
+    - MOVE
+        => Update Position for 'ID'.
+
+        - IN:
+            "subMove" => MOVE
+continue from here...
+(look at "player" case)
+        - Receiver:
+            => Ignored by original "sender" (with same 'ID' as in message)
+            - From: "subMove" - connected to "pubMoveP" and "pubMoveP" of SERVER
+            - Update position associated to 'ID'
+                => Depending on SRC, could update different info (eg: no orientation if SRC is VIEWER).
+
+
+-OUT
+        - Sender:
+            - When position changes
+                => Position listener (?)
+            - NEW MESSAGE
+                - SRC: "VIEWER"
+                - TYPE: "MOVE"
+                - ID of client
+                - Position (Vector3)
+                (?- Orientation (Quaternion) - MIGHT NOT BE REQUIRED)
+            - To: "pubMove" - connected to "subMove" of SERVER
+                => Don't send straight to clients but via server, to make sure server handles everything.
+
+
+
+    - SHOOT
+=> SAME/SIMILAR TO VIEWER! (?)
+        => Create Arrow for 'ID'.
+
+        - Sender:
+            - When shoot
+            - NEW MESSAGE
+                - SRC: "VIEWER"
+                - TYPE: "SHOOT"
+                - ID_SRC: ID client
+                - ID_PROJ: ID projectile
+                - COLOUR
+                - Position (Vector3)
+                - Direction (Quaternion)
+                - Strength (float?)
+            - To: "pubShoot" - connected to "subShoot" of SERVER
+
+        - Receiver:
+            => Also handled by original "sender" (so no need to check ID)
+            - From: "subShoot" - connected to "pubShoot" of SERVER
+            - Create arrow
+                => Depending on SRC might create different object (eg: PLAYER could shoot gun?)
+
+
+    - DESTROY
+        => Destroy arrow with 'ID'.
+        => SAME AS FOR PLAYER
+
+        - Receiver:
+            - From: "subShoot" - connected to "pubShoot" of SERVER
+            - Destroy arrow with ID.
+
+
+
+================
+
+SERVER:
+
+CONNECTIONS:
+- Subscribers:
+    - in Start (?)
+	sbClient.addSubscriber(subName, "string");
+
+    - in OnSpacebrewEvent
+        - parse message and get TYPE
+        - determine FCT from TYPE
+            => GameController.ProcessMessage(TYPE, MSG)
+                Call FCT with message
+        (Could also have:
+        - determine TYPE from _msg.name
+            switch(_msg.name)
+            - subMove => MOVE (could have P & V)
+            - subShoot => SHOOT
+            => MessageReceiver(TYPE, MSG)
+        But: not important, as the type of the message is already in the message.
+        )
+
+- Publishers:
+    - in Start (?)
+! FIND WAY TO GET LIST IN SPACEBREWEVENTS !
+        => From MessageSender (?)
+        Start() {
+            string pubName = publishers[MESSAGE_TYPES.MOVE];
+            sbClient.addPublisher(pubName, "string", <default?>);
+        }
+
+    - when action/event:
+        MessageSender.SendMove(MSG)
+            => get pubName from TYPE (knows associations MESSAGE_TYPES <> pubNames, and hardcoded in functions)
+                eg:
+                    SendMove(msg) {
+                        string pubName = publishers[MESSAGE_TYPES.MOVE];
+                        SpaceBrewEvents.SendString(pubName, MSG)
+                    }
+        - MOVE(P/V) => pubMove(P/V)
+        - SHOOT(P/V) => pubShoot(P/V)
+        - DESTROY => pubShoot
+
+
+MESSAGES:
+- MSG_IN:
+    (- MOVE => subMove)
+        - PLAYER_MOVE => subMoveP
+        - VIEWER_MOVE => subMoveV
+    - SHOOT => subShoot
+        - PLAYER_SHOOT => subShoot
+        - VIEWER_SHOOT => subShoot
+- MSG_OUT:
+    (- MOVE => pubMove)
+        - PLAYER_MOVE => pubMoveP
+        - VIEWER_MOVE => pubMoveV
+    - SHOOT => pubShoot
+        - PLAYER_SHOOT => pubShoot
+        - VIEWER_SHOOT => pubShoot
+    - DESTROY => pubShoot
+    (- SPAWN => pubSpawn)
+
+
+DETAILS:
+    - MOVE
+        => Update Position for 'ID'.
+
+        - IN:
+            "subMove" (or "subMoveP & "subMoveP") => MOVE
+
+            - Receiver:
+                - "subMove" (or specific "subMoveP"?)
+                    - connected to "pubMove" of PLAYER and VIEWER
+            - Trigger:
+                - Update position (associate with ID)
+                    => Will trigger position listener.
+
+        - OUT:
+            MOVE => "pubMoveP" or "pubMoveV"
+            => Send(MOVE, msg)
+                => server.Send("pubMove", msg)
+
+            - Triggered by:
+                - Position change
+                    => Listener on position triggered (with time intervals to avoid overload).
+            - Sender:
+                - "pubMove"
+                    - ("SRC" == "PLAYER") => "pubMoveP" - connected to "subMove" of PLAYER and VIEWER
+                    - ("SRC" == "VIEWER") => "pubMoveV" - connected to "subMove" of VIEWER
+                - NEW MESSAGE
+                    - SRC: "PLAYER" or "VIEWER (?) (Or "SERVER", and use "ID"?)
+                    - TYPE: "MOVE"
+                    - ID_CLIENT
+                    - Position (Vector3)
+                    (?- Orientation (Quaternion)
+                        => MIGHT NOT BE FULLY REQUIRED OR NOT AT ALL:
+                            - PLAYER: Only Y rotation?
+                            - VIEWER: No orientation?
+
+
+    - SHOOT
+        => Create Arrow for 'ID'.
+
+        - IN:
+            "subShoot" => SHOOT
+
+            - Receiver:
+                - "subShoot"
+                    - connected to "pubShoot" of PLAYER and VIEWER
+            - Trigger:
+                - Create arrow
+
+        - OUT:
+            SHOOT => "pubShoot"
+            => Send(SHOOT, msg)
+                => server.Send("pubShoot", msg)
+
+            - Triggered by:
+                - Arrow creation
+                    => From message reception (direct transfer).
+            - Sender:
+                - "pubShoot"
+                    - connected to "subShoot" of PLAYER and VIEWER
+                - MESSAGE COPY
+                    => WITH ADDED INFO! (can easily be done?)
+                    => Can be avoided if required additional information is already known by client.
+                    - ID_OBJECT: ID of new instantiated object
+                    - COLOUR associated to client
+
+
+    - DESTROY
+        => Destroy arrow with 'ID'.
+
+        - IN:
+            N/A
+
+        - OUT:
+            DESTROY => "pubShoot"
+            => Send(SHOOT, msg) (or "Send(DESTROY, msg)"?)
+                => server.Send("pubShoot", msg)
+
+            - Triggered by:
+                - Arrow destruction
+                    => Event when collision with a player or obstacle.
+            - Sender:
+                - "pubShoot"
+                    - connected to "subShoot" of PLAYER and VIEWER
+                - NEW MESSAGE
+                    - SRC: "SERVER"
+                    - TYPE: "DESTROY"
+                    (?- ID_SRC: ID client - Might not be required)
+                    - ID_OBJECT: ID of destructed object (to destroy)
+
+
+(
+    - SPAWN
+        => Generate a pickable object.
+
+        - IN:
+            N/A
+
+        - OUT:
+            SPAWN => "pubSpawn"
+            => Send(SPAWN, msg)
+                => server.Send("pubSpawn", msg)
+
+            - Triggered by:
+                - ... (TODO)
+            - Sender:
+                - "pubSpawn"
+                    - connected to "subSpawn" of PLAYER (?)
+                - NEW MESSAGE
+                    - SRC: "SERVER"
+                    - TYPE: "SPAWN"
+                    - ID_OBJECT: ID of spawned object (to create)
+                    - TYPE_OBJECT: Type of spawned object (to create)
+                    - Position
+                    - Orientation
+                    - ...
